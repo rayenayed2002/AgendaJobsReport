@@ -3,6 +3,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from fpdf import FPDF
 import numpy as np
+from datetime import date
 client = pymongo.MongoClient('localhost')
 db = client["admin"]
 col = db["agenda"]
@@ -53,6 +54,7 @@ company_counts = teacher_companies.value_counts()
 file_sizes = df['fileSize']
 test=[]
 print("10%")
+today = date.today()
 yahoo=[]
 gmail=[]
 uvt=[]
@@ -1066,7 +1068,7 @@ pdf.set_text_color(r= 0, g= 0, b = 255)
 pdf.cell(w=30, h=10, txt="Date: ", ln=0)
 pdf.set_font('Arial', '', 13)
 pdf.set_text_color(r=0, g= 0, b = 0)
-pdf.cell(w=30, h=10, txt="  06/20/2023", ln=1)
+pdf.cell(49, 10, f'{today}',ln=1)
 pdf.set_font('Arial', 'B', 18)
 pdf.set_text_color(r= 0, g= 0, b = 255)
 pdf.cell(w=30, h=10, txt="Author: ", ln=0)
@@ -1082,7 +1084,7 @@ pdf.multi_cell(w=0, h=10, txt='using those 2 figures, we can see the most used t
 pdf.add_page()
 pdf.ln(15)
 pdf.image('./userEmail.png', 
-          x = 18, y = 15, w = 170, h = 160, type = 'PNG')
+          x = 18, y = 15, w = 170, h = 110, type = 'PNG')
 pdf.ln(90)
 pdf.multi_cell(w=0, h=10, txt='here, we can see the most used emails in the dataset.This information can be valuable for understanding the email landscape and identifying potential communication channels' )
 pdf.image('./time_duration_histogram.png', 
@@ -1222,7 +1224,7 @@ pdf.image('./submitterValues.png',
           x = 18, y = 150, w = 170, h = 70, type = 'PNG')
 pdf.ln(100)
 pdf.multi_cell(w=0, h=10, txt='top submitters in the database')
-
+print("91%")
 pdf.add_page()
 pdf.cell(0, 10, "the most used Analysed Links:", ln=True)
 pdf.ln(2)
@@ -1230,6 +1232,7 @@ for link, count in analysedlinkkk.items():
     line =f" {link}: {count}"
     pdf.multi_cell(0, 10, line, align="L")
     pdf.ln(5)     
+print("92%")    
 pdf.add_page()
 pdf.ln(15)
 pdf.image('./LibraryBool.png',
@@ -1242,6 +1245,7 @@ pdf.ln(100)
 pdf.multi_cell(w=0, h=10, txt='the most used user email')
 pdf.add_page()
 pdf.ln(15)
+print("93%")
 pdf.image('./fileName.png',
           x = 13, y = 15, w = 170, h = 100, type = 'PNG')
 pdf.ln(90)
@@ -1256,6 +1260,7 @@ pdf.image('./isDeleted.png',
           x = 18, y = 15, w = 170, h = 70, type = 'PNG')
 pdf.ln(90)
 pdf.multi_cell(w=0, h=10, txt='isDeleted values in archive')
+print("94%")
 pdf.image('./isDone.png', 
           x = 18, y = 150, w = 170, h = 70, type = 'PNG')
 pdf.ln(100)
@@ -1279,19 +1284,21 @@ pdf.ln(90)
 pdf.multi_cell(w=0, h=10, txt='isPermanentlyDeleted values in archive')
 pdf.image('./isPublic.png', 
           x = 18, y = 150, w = 170, h = 70, type = 'PNG')
+print("96%")
 pdf.ln(100)
 pdf.multi_cell(w=0, h=10, txt='isPublic values in archive')
 pdf.add_page()
 pdf.ln(15)
 pdf.image('./isTranslated.png',
           x = 18, y = 15, w = 170, h = 70, type = 'PNG')
+print("97%")
 pdf.ln(90)
 pdf.multi_cell(w=0, h=10, txt='isTranslated values in archive')
 pdf.image('./submitterArchive.png',
           x = 18, y = 150, w = 170, h = 70, type = 'PNG')
 pdf.ln(100)
 pdf.multi_cell(w=0, h=10, txt='submitterArchive values in archive')
-
+print("98%")
 pdf.add_page()
 pdf.ln(15)
 pdf.image('./isPlagPrevent.png',
@@ -1304,4 +1311,4 @@ print("99%")
 pdf.ln(130)
 pdf.multi_cell(w=0, h=10, txt='size values in archive')
 print("100%")
-pdf.output(f'./37.pdf', 'F')
+pdf.output(f'./40.pdf', 'F')
