@@ -16,9 +16,7 @@ df['fileOriginalName']= df['data'].apply(lambda x: x.get('fileOriginalName'))
 df['langExt']= df['data'].apply(lambda x: x.get('langExt'))
 df['homoglyph']= df['data'].apply(lambda x: x.get('homoglyph'))
 df['submitter']= df['data'].apply(lambda x: x.get('submitter'))
-df['analysedLink']= df['data'].apply(lambda x: x.get('analysedLink'))
 df['LibraryBool']= df['data'].apply(lambda x: x.get('LibraryBool'))
-df['blackSource'] = df['data'].apply(lambda x: x.get('teacher', {}).get('blackSource') if x is not None and x.get('teacher') is not None else None)
 df['isAnalysisRun'] = df['data'].apply(lambda x: x.get('teacher', {}).get('isAnalysisRun') if x is not None and x.get('teacher') is not None else None)
 df['isAnalysisEnd'] = df['data'].apply(lambda x: x.get('teacher', {}).get('isAnalysisEnd') if x is not None and x.get('teacher') is not None else None)
 df['isPlagDataBase'] = df['data'].apply(lambda x: x.get('teacher', {}).get('isPlagDataBase') if x is not None and x.get('teacher') is not None else None)
@@ -26,7 +24,6 @@ df['firstname'] = df['data'].apply(lambda x: x.get('teacher', {}).get('firstname
 df['lastname'] = df['data'].apply(lambda x: x.get('teacher', {}).get('lastname') if x is not None and x.get('teacher') is not None else None)
 df['isMyData'] = df['data'].apply(lambda x: x.get('teacher', {}).get('isMyData') if x is not None and x.get('teacher') is not None else None)
 df['__v'] = df['data'].apply(lambda x: x.get('teacher', {}).get('__v') if x is not None and x.get('teacher') is not None else None)
-df['userID'] = df['data'].apply(lambda x: x.get('userID'))
 df['userFirstName'] = df['data'].apply(lambda x: x.get('userFirstName'))
 df['userLastName'] = df['data'].apply(lambda x: x.get('userLastName'))
 df['userEmail'] = df['data'].apply(lambda x: x.get('userEmail'))
@@ -46,9 +43,6 @@ df['submitterr'] = df['data'].apply(lambda x: x.get('archive', {}).get('submitte
 df_name = df['name']
 lastModifiedBy=df['lastModifiedBy']
 df_priority=df['priority']
-df['_id'] = df['_id'].astype(str)
-df_id=df['_id']
-blacklisted_sources = df['blackSource'].explode().value_counts()
 teacher_companies = df['data'].apply(lambda x: x.get('teacher', {}).get('company') if x is not None and x.get('teacher') is not None else None)
 company_counts = teacher_companies.value_counts()
 file_sizes = df['fileSize']
@@ -158,18 +152,14 @@ def fileName(df):
     fileNamee=df["fileName"].value_counts().head(5)
     return fileNamee
 def LibraryBool(df):
-     LibraryBooll=df["LibraryBool"].value_counts().head()
-     return LibraryBooll
+    LibraryBooll=df["LibraryBool"].value_counts().head()
+    return LibraryBooll
 def mail(df):
     maill=df["mail"].value_counts().head()
     return maill
 def userEmail(df):
     userEmaill=df["userEmail"].value_counts().head()
     return userEmaill
-def analysedLink(df):
-    analysedLinkk = df["analysedLink"].astype(str).value_counts().head(3)
-    analysedLinkkkk=analysedLinkk
-    return analysedLinkkkk
 def submitter(df):
     submitterFunction=df["submitter"].value_counts().head()
     return submitterFunction
@@ -178,34 +168,23 @@ def homoglyph(df):
     return homoglyphFunction
 def langue(df):
     langueFunction=df["langExt"].value_counts().head()
-    return langueFunction    
+    return langueFunction
 def first_name_count(df):
     first_names = df['firstname'].value_counts().head(5)
     return first_names
 def last_name_count(df):
-     last_names = df['lastname'].value_counts().head(5)
-     if ' ' in last_names.index:
+    last_names = df['lastname'].value_counts().head(5)
+    if ' ' in last_names.index:
         last_names.rename(index={' ': None}, inplace=True)
-     return last_names
+    return last_names
 def user_first_name_count(df):
     first_names = df['userFirstName'].value_counts().head(5)
     return first_names
 def user_last_name_count(df):
-     last_names = df['userLastName'].value_counts().head(5)
-     if ' ' in last_names.index:
+    last_names = df['userLastName'].value_counts().head(5)
+    if ' ' in last_names.index:
         last_names.rename(index={' ': None}, inplace=True)
-     return last_names
-def unique_ids(df):
-    ids=[]
-    a=0
-    b=0
-    for e in df['userID']:
-         if e not in ids:
-           ids.append(e)  
-           a+=1
-         elif e in ids:
-           b+=1
-    return a
+    return last_names
 def whenAnalyseRuntrue(df):
     isplagdatabaseNone=0
     isplagdatabseTrue=0
@@ -216,7 +195,6 @@ def whenAnalyseRuntrue(df):
     isMyDataNone=0
     isMyDataTrue=0
     isMyDataNotNullCountFalse=0
-    
     for e in df['teacher']:
         if e is not None and hasattr(e, 'get'):
             analyseRun = e.get('isAnalysisRun')
@@ -225,34 +203,31 @@ def whenAnalyseRuntrue(df):
                 analyseEnd = e.get('isAnalysisEnd')
                 ismydata = e.get('isMyData')
 
-                if isplagdatabase == None:
+                if isplagdatabase is None:
                     isplagdatabaseNone+=1
                 elif isplagdatabase ==0:
                      isplagdatabaseNotNullCountFalse += 1
                 else:
-                    isplagdatabseTrue+=1
-                    
-                if analyseEnd == None:
+                    isplagdatabseTrue+=1            
+                if analyseEnd is None:
                     isAnalyseEndNone+=1
                 elif analyseEnd ==0:
                      isAnalyseEndNotNullCountFalse += 1
                 else:
                     isAnalyseEndTrue+=1
-                    
-                if ismydata == None:
+                if ismydata is None:
                     isMyDataNone+=1
                 elif ismydata ==0:
                      isMyDataNotNullCountFalse += 1
                 else:
-                    isMyDataTrue+=1    
-                    
+                    isMyDataTrue+=1
     df_isAnalysedRun = pd.DataFrame({
     'name': ['name','isAnalysedEnd', 'isPlagDatabase', 'isMyData'],
     'True': ['True',isAnalyseEndTrue, isplagdatabseTrue, isMyDataTrue],
     'false': ['False',isAnalyseEndNotNullCountFalse, isplagdatabaseNotNullCountFalse, isMyDataNotNullCountFalse],
     'None': ['None',isAnalyseEndNone, isplagdatabaseNone, isMyDataNone]
 })
-    return df_isAnalysedRun                 
+    return df_isAnalysedRun
 def whenAnalyseRunNotNull(df):
     analyseRunNotNullCount = 0
     isplagdatabaseNotNullCount = 0
@@ -273,15 +248,14 @@ def whenAnalyseRunNotNull(df):
                 isplagdatabase = e.get('isPlagDataBase')
                 analyseEnd = e.get('isAnalysisEnd')
                 ismydata = e.get('isMyData')
-
                 if isplagdatabase is not None:
                     isplagdatabaseNotNullCount += 1
                     if isplagdatabase ==0:
-                       isplagdatabaseNotNullCountFalse += 1
+                        isplagdatabaseNotNullCountFalse += 1
                 if analyseEnd is not None:
                     analyseEndNotNullCount += 1
                     if analyseEnd ==0:
-                       analyseEndNotNullCountFalse += 1
+                        analyseEndNotNullCountFalse += 1
                 if ismydata is not None:
                     ismydataNotNullCount += 1
                     if ismydata ==0:
@@ -291,10 +265,8 @@ def whenAnalyseRunNotNull(df):
     'name': ['name','isAnalysedEnd', 'isPlagDatabase', 'isMyData'],
     'True': ['True',analyseEndNotNullCount-analyseEndNotNullCountFalse, isplagdatabaseNotNullCount-isplagdatabaseNotNullCountFalse, ismydataNotNullCount-ismydataNotNullCountFalse],
     'false': ['False',analyseEndNotNullCountFalse, isplagdatabaseNotNullCountFalse, ismydataNotNullCountFalse],
-    'None': ['None',final_isAnalysedEnd, final_isPlagDatabase, final_isMyData]
-})
+    'None': ['None',final_isAnalysedEnd, final_isPlagDatabase, final_isMyData]})
     return df_isAnalysedRun
-
 def whenAnalyseRunFalse(df):
     isplagdatabaseNone=0
     isplagdatabseTrue=0
@@ -305,7 +277,6 @@ def whenAnalyseRunFalse(df):
     isMyDataNone=0
     isMyDataTrue=0
     isMyDataNotNullCountFalse=0
-    
     for e in df['teacher']:
         if e is not None and hasattr(e, 'get'):
             analyseRun = e.get('isAnalysisRun')
@@ -313,34 +284,29 @@ def whenAnalyseRunFalse(df):
                 isplagdatabase = e.get('isPlagDataBase')
                 analyseEnd = e.get('isAnalysisEnd')
                 ismydata = e.get('isMyData')
-
                 if isplagdatabase == None:
                     isplagdatabaseNone+=1
                 elif isplagdatabase ==0:
-                     isplagdatabaseNotNullCountFalse += 1
+                    isplagdatabaseNotNullCountFalse += 1
                 else:
                     isplagdatabseTrue+=1
-                    
                 if analyseEnd == None:
                     isAnalyseEndNone+=1
                 elif analyseEnd ==0:
-                     isAnalyseEndNotNullCountFalse += 1
+                    isAnalyseEndNotNullCountFalse += 1
                 else:
                     isAnalyseEndTrue+=1
-                    
                 if ismydata == None:
                     isMyDataNone+=1
                 elif ismydata ==0:
-                     isMyDataNotNullCountFalse += 1
+                    isMyDataNotNullCountFalse += 1
                 else:
-                    isMyDataTrue+=1    
-                    
+                    isMyDataTrue+=1
     df_isAnalysedRun = pd.DataFrame({
     'name': ['name','isAnalysedEnd', 'isPlagDatabase', 'isMyData'],
     'True': ['True',isAnalyseEndTrue, isplagdatabseTrue, isMyDataTrue],
     'false': ['False',isAnalyseEndNotNullCountFalse, isplagdatabaseNotNullCountFalse, isMyDataNotNullCountFalse],
-    'None': ['None',isAnalyseEndNone, isplagdatabaseNone, isMyDataNone]
-})
+    'None': ['None',isAnalyseEndNone, isplagdatabaseNone, isMyDataNone]})
     return df_isAnalysedRun
 def analyseRun(df):
     analyseRunTrue=0
@@ -395,7 +361,7 @@ def teacherMyData(df):
         elif e== 0 :
             isMyDataFalse+=1
         else:
-           isMyDataNull+=1
+            isMyDataNull+=1
     isMyDataDetail=[isMyDataTrue,isMyDataFalse,isMyDataNull]
     return isMyDataDetail
 def fileSizeCount(df):
@@ -423,12 +389,12 @@ def fileSizeCount(df):
     fileDetailSizeCount=[]
     fileAllDetails=[]
     for e in df['data']:
-       file_original_name = e.get('fileOriginalName')
-       if file_original_name is not None:
+        file_original_name = e.get('fileOriginalName')
+        if file_original_name is not None:
             file_format = file_original_name.split('.')[-1]
             if file_format == 'docx':
-              docxFilesSize=docxFilesSize+e.get('fileSize')
-              docxFilesSizeCount+=1
+                docxFilesSize=docxFilesSize+e.get('fileSize')
+                docxFilesSizeCount+=1
             elif file_format == 'pdf':
                 pdfFilesSize=pdfFilesSize+e.get('fileSize')
                 pdfFilesSizeCount+=1
@@ -445,14 +411,14 @@ def fileSizeCount(df):
                 pngFilesSize=pngFilesSize+e.get('fileSize')
                 pngFilesSizeCount+=1
             elif file_format == 'ppt':
-               pptFilesSize=pptFilesSize+e.get('fileSize')
-               pptFilesSizeCount+=1
+                pptFilesSize=pptFilesSize+e.get('fileSize')
+                pptFilesSizeCount+=1
             elif file_format == 'xlsx':
-               xlsxFilesSize=xlsxFilesSize+e.get('fileSize')
-               xlsxFilesSizeCount+=1
+                xlsxFilesSize=xlsxFilesSize+e.get('fileSize')
+                xlsxFilesSizeCount+=1
             elif file_format == 'gif':
-                 gifFilesSize= gifFilesSize+e.get('fileSize')
-                 gifFilesSizeCount+=1
+                gifFilesSize= gifFilesSize+e.get('fileSize')
+                gifFilesSizeCount+=1
             elif file_format == 'jpg':
                 jpgFilesSize=jpgFilesSize+e.get('fileSize')
                 jpgFilesSizeCount+=1
@@ -469,20 +435,18 @@ def get_mails(df):
     y=0
     u=0
     for e in df['mail']:
-         if e is not None:
+        if e is not None:
              if '@gmail' in e:
-              gmail.append('a')  
-              g=g+1
+                 gmail.append('a')
+                 g=g+1
              elif '@yahoo' in e:
-              yahoo.append('b')
-              y=y+1
+                 yahoo.append('b')
+                 y=y+1
              elif '@uvt' in e:
-              uvt.append('c')
-              u=u+1
+                 uvt.append('c')
+                 u=u+1
     graphe=gmail+yahoo+uvt
-    
     return graphe
-
 def start_scanning(df):
     start_scanningCount20=0
     start_scanningCount10=0
@@ -493,14 +457,13 @@ def start_scanning(df):
         if nom == 'start scanning':
             priorityy = row['priority']
             if priorityy == 20:
-                    start_scanningCount20+=1
-            elif priorityy == 10: 
-                    start_scanningCount10+=1
-            elif priorityy == 0:     
-                    start_scanningCount0+=1
-    start_scanningData=[start_scanningCount0,start_scanningCount10,start_scanningCount20]      
-    return start_scanningData         
-  
+                start_scanningCount20+=1
+            elif priorityy==10:
+                start_scanningCount10+=1
+            elif priorityy == 0:
+                start_scanningCount0+=1
+    start_scanningData=[start_scanningCount0,start_scanningCount10,start_scanningCount20]
+    return start_scanningData
 def start_indexing(df):
     start_indexingCount20=0
     start_indexingCount10=0
@@ -511,13 +474,13 @@ def start_indexing(df):
         if nom == 'start indexing':
             priorityy = row['priority']
             if priorityy == 20:
-                    start_indexingCount20+=1
-            if priorityy == 10: 
-                    start_indexingCount10+=1
-            if priorityy == 0:     
-                    start_indexingCount0+=1
-    start_indexingData=[start_indexingCount0,start_indexingCount10,start_indexingCount20]      
-    return start_indexingData         
+                start_indexingCount20+=1
+            if priorityy == 10:
+                start_indexingCount10+=1
+            if priorityy == 0:
+                start_indexingCount0+=1
+    start_indexingData=[start_indexingCount0,start_indexingCount10,start_indexingCount20]
+    return start_indexingData
 def start_Adding_Link(df):
     start_Adding_LinkCount20=0
     start_Adding_LinkCount10=0
@@ -528,13 +491,13 @@ def start_Adding_Link(df):
         if nom == 'start adding link':
             priorityy = row['priority']
             if priorityy == 20:
-                    start_Adding_LinkCount20+=1
-            elif priorityy == 10: 
-                    start_Adding_LinkCount10+=1
-            elif priorityy == 0:     
-                   start_Adding_LinkCount0+=1
-    start_Adding_LinkData=[start_Adding_LinkCount0,start_Adding_LinkCount10,start_Adding_LinkCount20]      
-    return start_Adding_LinkData         
+                start_Adding_LinkCount20+=1
+            elif priorityy == 10:
+                start_Adding_LinkCount10+=1
+            elif priorityy == 0:
+                start_Adding_LinkCount0+=1
+    start_Adding_LinkData=[start_Adding_LinkCount0,start_Adding_LinkCount10,start_Adding_LinkCount20]
+    return start_Adding_LinkData
 def start_arabic(df):
     start_arabicCount20=0
     start_arabicCount10=0
@@ -545,14 +508,13 @@ def start_arabic(df):
         if nom == 'start arabic':
             priorityy = row['priority']
             if priorityy == 20:
-                    start_arabicCount20+=1
-            elif priorityy == 10: 
-                    start_arabicCount10+=1
-            elif priorityy == 0:     
-                    start_arabicCount0+=1
-    start_arabicData=[start_arabicCount0,start_arabicCount10,start_arabicCount20]      
-    return start_arabicData         
-  
+                start_arabicCount20+=1
+            elif priorityy == 10:
+                start_arabicCount10+=1
+            elif priorityy == 0:
+                start_arabicCount0+=1
+    start_arabicData=[start_arabicCount0,start_arabicCount10,start_arabicCount20]
+    return start_arabicData
 def start_scanning_admin(df):
     start_scanning_adminCount20=0
     start_scanning_adminCount10=0
@@ -563,54 +525,27 @@ def start_scanning_admin(df):
         if nom == 'start scanning admin':
             priorityy = row['priority']
             if priorityy == 20:
-                    start_scanning_adminCount20+=1
-            elif priorityy == 10: 
-                    start_scanning_adminCount10+=1
-            elif priorityy == 0:     
-                    start_scanning_adminCount0+=1
-    start_scanning_adminData=[start_scanning_adminCount0,start_scanning_adminCount10,start_scanning_adminCount20]      
-    return start_scanning_adminData         
-             
-
-
+                start_scanning_adminCount20+=1
+            elif priorityy == 10:
+                start_scanning_adminCount10+=1
+            elif priorityy == 0:
+                start_scanning_adminCount0+=1
+    start_scanning_adminData=[start_scanning_adminCount0,start_scanning_adminCount10,start_scanning_adminCount20]
+    return start_scanning_adminData
 def get_unique_priority(df):
-   
     priorityy=[]
     for e in df_priority:
-         if e is not None:
-             if e not in priorityy:
-              priorityy.append(e)  
-              
+        if e is not None:
+            if e not in priorityy:
+                priorityy.append(e)
     return priorityy
 def get_unique_name(df):
-   
     namee=[]
     for e in df_name:
-         if e is not None:
-             if e not in namee:
-              namee.append(e)  
-              
+        if e is not None:
+            if e not in namee:
+                namee.append(e)
     return namee
-def nameCount(df):
-    start_scanningCount=0
-    start_scanning_adminCount=0
-    start_indexingCount=0
-    start_arabicCount=0
-    start_adding_linkCount=0
-    nameCount=[]
-    for e in df_name:
-        if e =='start scanning':
-            start_scanningCount+=1
-        if e =='start scanning admin':
-             start_scanning_adminCount+=1
-        if e =='start indexing':
-            start_indexingCount+=1
-        if e =='start arabic':
-            start_arabicCount+=1
-        if e =='start adding link':  
-            start_adding_linkCount+=1
-    nameCount=[start_scanningCount,start_indexingCount,start_arabicCount,start_adding_linkCount,start_scanning_adminCount]   
-    return nameCount     
 def priorityCount(df):
     prio20Count=0
     prio10Count=0
@@ -621,38 +556,36 @@ def priorityCount(df):
             prio20Count+=1
         if e == 10:
             prio10Count+=1
-        if e == 0:  
+        if e == 0:
             prio0Count+=1
-    prioCountData=[prio0Count,prio10Count,prio20Count]    
+    prioCountData=[prio0Count,prio10Count,prio20Count]
     return prioCountData
 def get_unique_gmail(df):
-   
     gmail=[]
     g=0
     for e in df['mail']:
-         if e is not None:
-             if '@gmail' in e:
-              gmail.append('a')  
-              g=g+1
+        if e is not None:
+            if '@gmail' in e:
+                gmail.append('a')
+                g=g+1
     return g
 def get_unique_yahoo(df):
     yahoo=[]
     y=0
     for e in df['mail']:
-         if e is not None:
-             if '@yahoo' in e:
-              yahoo.append('b')
-              y=y+1
+        if e is not None:
+            if '@yahoo' in e:
+                yahoo.append('b')
+                y=y+1
     return y
 def get_unique_uvt(df):
     uvt=[]
     u=0
     for e in df['mail']:
-         if e is not None:
-             if '@uvt' in e:
-              uvt.append('c')
-              u=u+1
-    
+        if e is not None:
+            if '@uvt' in e:
+                uvt.append('c')
+                u=u+1
     return u
 print("20%")
 isPlagPreventt=isPlagPrevent(df)
@@ -670,7 +603,6 @@ fileNamee=fileName(df)
 LibraryBooll=LibraryBool(df)
 maill=mail(df)
 userEmaill=userEmail(df)
-analysedlinkkk=analysedLink(df)
 submitterValues=submitter(df)
 homoglyphValues=homoglyph(df)
 langueValues=langue(df)
@@ -679,15 +611,13 @@ userFirstName=user_first_name_count(df)
 userLastName=user_last_name_count(df)
 firstname=first_name_count(df)
 lastname=last_name_count(df)
-p=0
 print("30%")
-p=unique_ids(df)
 priorityCountt=priorityCount(df)
 name_countt=get_names(df)
 name_count=np.array(name_countt.index)
-nameCountt=nameCount(df)
+nameCountt=np.array(name_countt.values)
 start_indexingg=start_indexing(df)
-start_scanningg=start_scanning(df) 
+start_scanningg=start_scanning(df)
 start_Adding_Linkk=start_Adding_Link(df)
 start_arabicc=start_arabic(df)
 start_scanning_adminn=start_scanning_admin(df)
@@ -707,20 +637,19 @@ yahoo=get_unique_yahoo(df)
 getMail = get_mails(df)
 print("40%")
 dff = pd.DataFrame({'getMail': getMail})
-plt.subplot(1, 2, 1) # row 1, col 2 index 1
+plt.subplot(1, 2, 1)
 a=dff['getMail'].value_counts()
 plt.pie(a, labels= mylist)
 plt.title("mail type!")
-plt.subplot(1, 2, 2) # index 2
+plt.subplot(1, 2, 2)
 mylist2= np.array([yahoo,gmail,uvt])
 plt.bar(mylist,mylist2)
 plt.title("mail!")
 plt.subplots_adjust(wspace=0.8)
-plt.savefig('./example_chart.png', 
-           transparent=False,  
-           facecolor='white', 
+plt.savefig('./example_chart.png',
+           transparent=False,
+           facecolor='white',
            bbox_inches="tight")
-
 # Plot the file size distribution
 plt.figure(figsize=(8, 6))
 file_format_counts.plot(kind='bar', edgecolor='black')
@@ -728,9 +657,9 @@ plt.xlabel('File Format')
 plt.ylabel('Count')
 plt.title('File Format Counts')
 plt.xticks(rotation=45)
-plt.savefig('./example2_chart.png', 
-           transparent=False,  
-           facecolor='white', 
+plt.savefig('./example2_chart.png',
+           transparent=False,
+           facecolor='white',
            bbox_inches="tight")
 plt.show()
 plt.figure(figsize=(8, 6))
@@ -740,15 +669,6 @@ plt.ylabel('Frequency')
 plt.title('Time Duration Analysis')
 plt.grid(True)
 plt.savefig('./time_duration_histogram.png', dpi=300, bbox_inches='tight')
-plt.show()
-plt.figure(figsize=(14, 6))
-blacklisted_sources.plot(kind='bar', color='skyblue')
-plt.xlabel('Blacklisted Source')
-plt.ylabel('Count')
-plt.title('Blacklisted Source Analysis')
-plt.xticks(rotation=45, ha='right')
-plt.grid(True)
-plt.savefig('./blacklisted_sources.png', dpi=300, bbox_inches='tight')
 plt.show()
 plt.figure(figsize=(15, 6))
 plt.bar(top_5_companies_ids, top_5_companies)
@@ -913,7 +833,6 @@ plt.title('homoglyphValues  count')
 plt.xticks(rotation=1, ha='right')
 plt.savefig('./homoglyphValues.png', dpi=300, bbox_inches='tight')
 plt.show()
-
 plt.figure(figsize=(14, 6))
 submitterValues.plot(kind='bar', color='black')
 plt.xlabel('submitterValues')
@@ -930,7 +849,6 @@ plt.title('userEmail  count')
 plt.xticks(rotation=45, ha='right')
 plt.savefig('./userEmail.png', dpi=300, bbox_inches='tight')
 plt.show()
-
 plt.figure(figsize=(14, 6))
 LibraryBooll.plot(kind='bar', color='green')
 plt.xlabel('LibraryBool values')
@@ -1044,13 +962,13 @@ class PDF(FPDF):
         super().__init__()
     def header(self):
         if self.page_no()==1 :
-                self.set_font('Arial', 'B', 25)
-                pdf.set_text_color(r= 255, g= 0, b = 0)
-                self.cell(0, 12, 'Statistics report', 0, 1, 'C') 
+            self.set_font('Arial', 'B', 25)
+            pdf.set_text_color(r= 255, g= 0, b = 0)
+            self.cell(0, 12, 'Statistics report', 0, 1, 'C')
         elif   self.page_no()==2 :
-                self.set_font('Arial', 'B', 25)
-                pdf.set_text_color(r= 255, g= 0, b = 0)
-                self.cell(0, 12, 'Statistics report', 0, 1, 'C') 
+            self.set_font('Arial', 'B', 25)
+            pdf.set_text_color(r= 255, g= 0, b = 0)
+            self.cell(0, 12, 'Statistics report', 0, 1, 'C')
     def footer(self):
         self.set_y(-15)
         self.set_font('Arial', '', 12)
@@ -1059,10 +977,10 @@ class PDF(FPDF):
         super().add_page()
         self.rect(10, 10, self.w - 20, self.h - 20)
 pdf = PDF()
-pdf.add_page()  
+pdf.add_page()
 pdf.image('./ssc.png',   x = 50, y = 100, w = 120, h =100, type = 'PNG')
 pdf.add_page()
-pdf.ln(15)
+pdf.ln(18)
 pdf.set_font('Arial', 'B', 18)
 pdf.set_text_color(r= 0, g= 0, b = 255)
 pdf.cell(w=30, h=10, txt="Date: ", ln=0)
@@ -1077,52 +995,52 @@ pdf.set_text_color(r=0, g= 0, b = 0)
 pdf.cell(w=30, h=10, txt="admin", ln=1)
 pdf.ln(15)
 pdf.multi_cell(w=0, h=10, txt='In this report, we present the analysis of the dataset collected from our research team. The dataset comprises agenda jobs. Our objective is to explore the dataset and uncover key insights and patterns through statistical analysis and visualization techniques')
-pdf.image('./example_chart.png', 
+pdf.ln(10)
+pdf.image('./example_chart.png',
           x = 40, y = None, w = 100, h = 0, type = 'PNG')
-pdf.ln(15)
+pdf.ln(18)
 pdf.multi_cell(w=0, h=10, txt='using those 2 figures, we can see the most used types of emails between those 3:gmail,yahoo,uvt . we choosed them because they are the most known 3 types of emails nowadays')
 pdf.add_page()
 pdf.ln(15)
-pdf.image('./userEmail.png', 
+pdf.image('./userEmail.png',
           x = 18, y = 15, w = 170, h = 110, type = 'PNG')
-pdf.ln(90)
+pdf.ln(100)
 pdf.multi_cell(w=0, h=10, txt='here, we can see the most used emails in the dataset.This information can be valuable for understanding the email landscape and identifying potential communication channels' )
-pdf.image('./time_duration_histogram.png', 
-          x = 50, y = 150, w = 100, h = 0, type = 'PNG')
-pdf.ln(90)
+pdf.image('./time_duration_histogram.png',
+          x = 50, y = 160, w = 100, h = 0, type = 'PNG')
+pdf.ln(110)
 #Bar plot displaying the counts of each file format.we notice that the most common format is pdf then docx,those two were used in 99% of the files in the dataset
-pdf.multi_cell(w=0, h=10, txt='time_duration help us identify if there is problems while compiling,the operations should ')
+pdf.multi_cell(w=0, h=10, txt='In order to gain insights into the duration of various processes and runs, we have conducted a comprehensive time duration analysis ')
 pdf.add_page()
-pdf.ln(15)
-pdf.image('./example2_chart.png', 
-          x = 18, y = 15, w = 160, h = 120, type = 'PNG')
+pdf.ln(14)
+pdf.image('./example2_chart.png',
+          x = 23, y = 15, w = 160, h = 120, type = 'PNG')
 print("75%")
-pdf.ln(90)
+pdf.ln(115)
 pdf.multi_cell(w=0, h=10, txt='This distribution provides insights about the most used type of files in the database')
-pdf.image('./averagefilesize.png', 
-          x = 18, y = 150, w = 170, h = 70, type = 'PNG')
-pdf.ln(100)
+pdf.image('./averagefilesize.png',
+          x = 18, y = 155, w = 170, h = 70, type = 'PNG')
+pdf.ln(105)
 pdf.multi_cell(w=0, h=10, txt='in this plot, we used the most known file types and we calculated the total size of each of them in the dataset ')
-
 pdf.add_page()
 pdf.ln(15)
-pdf.image('./analyseEndDetailPlot.png', 
-         x = 18, y = 15, w = 170, h = 70, type = 'PNG')
-pdf.ln(90)
-pdf.multi_cell(w=0, h=10, txt='this is statistique for analyse end detail')
-pdf.image('./teacherMyDataDetailPlot.png', 
-          x = 18, y = 150, w = 170, h = 70, type = 'PNG')
+pdf.image('./analyseEndDetailPlot.png',
+         x = 18, y = 30, w = 170, h = 70, type = 'PNG')
 pdf.ln(100)
+pdf.multi_cell(w=0, h=10, txt='this is statistique for analyse end detail')
+pdf.image('./teacherMyDataDetailPlot.png',
+          x = 18, y = 150, w = 170, h = 70, type = 'PNG')
+pdf.ln(110)
 pdf.multi_cell(w=0, h=10, txt='this is teacher my data statistique')
 pdf.add_page()
 pdf.ln(15)
-pdf.image('./analysePlagDatabaseDetailPlot.png', 
-         x = 18, y = 15, w = 170, h = 70, type = 'PNG')
+pdf.image('./analysePlagDatabaseDetailPlot.png',
+         x = 18, y = 30, w = 170, h = 70, type = 'PNG')
 pdf.ln(90)
 pdf.multi_cell(w=0, h=10, txt='this is analyse plagdatabse details')
-pdf.image('./priorityCounttPlot.png', 
+pdf.image('./analyseRunDetailPlot.png',
           x = 18, y = 150, w = 170, h = 70, type = 'PNG')
-pdf.ln(100)
+pdf.ln(110)
 pdf.multi_cell(w=0, h=10, txt='this is the stats for priority in the dataset')
 pdf.add_page()
 pdf.ln(15)
@@ -1136,9 +1054,9 @@ for i in range(len(whenAnalyseRunTrue)):
         pdf.cell(47, 10, feature2, border=1, ln=0, align='C')
         pdf.cell(47, 10, feature3, border=1, ln=0, align='C')
         pdf.cell(47, 10, feature4, border=1, ln=1, align='C')
-pdf.ln(15)    
+pdf.ln(5)
 pdf.multi_cell(w=0, h=10, txt='when analyseRun is false,this the values of the other data')
-pdf.ln(80)
+pdf.ln(10)
 for i in range(len(whenAnalyseRunfalse)):
         feature1 = str(whenAnalyseRunfalse['name'].iloc[i])
         feature2 = str(whenAnalyseRunfalse['True'].iloc[i])
@@ -1148,75 +1066,78 @@ for i in range(len(whenAnalyseRunfalse)):
         pdf.cell(47, 10, feature2, border=1, ln=0, align='C')
         pdf.cell(47, 10, feature3, border=1, ln=0, align='C')
         pdf.cell(47, 10, feature4, border=1, ln=1, align='C')
-pdf.ln(15)
+pdf.ln(5)
 pdf.multi_cell(w=0, h=10, txt='when analyseRun is false,this the values of the other data')
-pdf.ln(15)   
-
+pdf.ln(15)
+pdf.image('./priorityCounttPlot.png',
+         x = 18, y = 155, w = 170, h = 70, type = 'PNG')
+pdf.ln(70)
+pdf.multi_cell(w=0, h=10, txt='By considering the priority level of each processus, we can effectively allocate resources and attention to the most critical data sources. ')
 pdf.add_page()
 pdf.ln(15)
 pdf.image('./nameCounttPlot.png',
-         x = 18, y = 15, w = 170, h = 70, type = 'PNG')
+         x = 18, y = 20, w = 170, h = 70, type = 'PNG')
 pdf.ln(90)
-pdf.multi_cell(w=0, h=10, txt='here we have the count of the names of the operations')
-pdf.image('./startIndexingPlot.png', 
+pdf.multi_cell(w=0, h=10, txt='we can see through this plot the most common collection names we have')
+pdf.image('./startIndexingPlot.png',
           x = 18, y = 150, w = 170, h = 70, type = 'PNG')
 pdf.ln(100)
-pdf.multi_cell(w=0, h=10, txt='thoses plots shows the relation between the priority and the names')
+pdf.multi_cell(w=0, h=10, txt='this figure shows us the priority count when the name of the collection is start indexing ')
 pdf.add_page()
 pdf.ln(15)
-pdf.image('./StartScanning.png', 
-         x = 18, y = 15, w = 170, h = 70, type = 'PNG')
+pdf.image('./StartScanning.png',
+         x = 18, y = 20, w = 170, h = 70, type = 'PNG')
 pdf.ln(90)
-pdf.multi_cell(w=0, h=10, txt='the priority counts on the name start scanning')
-pdf.image('./start_adding_linkPlot.png', 
+pdf.multi_cell(w=0, h=10, txt='this figure shows us the priority count when the name of the collection is start scanning')
+pdf.image('./start_adding_linkPlot.png',
           x = 18, y = 150, w = 170, h = 70, type = 'PNG')
 pdf.ln(100)
-pdf.multi_cell(w=0, h=10, txt='the priority counts on the name start adding link')
+pdf.multi_cell(w=0, h=10, txt='this figure shows us the priority count when the name of the collection is start adding link')
 pdf.add_page()
 pdf.ln(15)
-pdf.image('./startArabicPlot.png', 
-          x = 18, y = 15, w = 170, h = 70, type = 'PNG')
+pdf.image('./startArabicPlot.png',
+          x = 18, y = 20, w = 170, h = 70, type = 'PNG')
 pdf.ln(90)
-pdf.multi_cell(w=0, h=10, txt='the priority counts on the name start arabic plot')
-pdf.image('./start_scanning_admin_Plot.png', 
+pdf.multi_cell(w=0, h=10, txt='this figure shows us the priority count when the name of the collection is start arabic')
+pdf.image('./start_scanning_admin_Plot.png',
           x = 18, y = 150, w = 170, h = 70, type = 'PNG')
 pdf.ln(100)
-pdf.multi_cell(w=0, h=10, txt='the priority counts on the name start scanning admin')
+pdf.multi_cell(w=0, h=10, txt='this figure shows us the priority count when the name of the collection is start scanning admin')
 print("85%")
 pdf.add_page()
 pdf.ln(15)
-pdf.image('./firstname.png', 
-          x = 18, y = 15, w = 170, h = 70, type = 'PNG')
+pdf.image('./firstname.png',
+          x = 18, y = 20, w = 170, h = 70, type = 'PNG')
 pdf.ln(90)
 pdf.multi_cell(w=0, h=10, txt='the most common first names')
-pdf.image('./lastname.png', 
+pdf.image('./lastname.png',
          x = 18, y = 150, w = 170, h = 70, type = 'PNG')
 pdf.ln(100)
 pdf.multi_cell(w=0, h=10, txt=' the most common last names')
 pdf.add_page()
 pdf.ln(15)
-pdf.image('./userfirstname.png', 
-          x = 18, y = 15, w = 170, h = 70, type = 'PNG')
+pdf.image('./userfirstname.png',
+          x = 18, y = 20, w = 170, h = 70, type = 'PNG')
 pdf.ln(90)
 pdf.multi_cell(w=0, h=10, txt='the most common users first name')
-pdf.image('./userlastname.png', 
+pdf.image('./userlastname.png',
          x = 18, y = 150, w = 170, h = 70, type = 'PNG')
 pdf.ln(100)
 pdf.multi_cell(w=0, h=10, txt='the most common users last name')
 pdf.add_page()
 pdf.ln(15)
-pdf.image('./__v.png', 
-         x = 18, y = 15, w = 170, h = 70, type = 'PNG')
+pdf.image('./__v.png',
+         x = 18, y = 20, w = 170, h = 70, type = 'PNG')
 pdf.ln(90)
 pdf.multi_cell(w=0, h=10, txt='__v counts ')
 pdf.image('./langueValues.png',
           x = 18, y = 150, w = 170, h = 70, type = 'PNG')
 pdf.ln(100)
-pdf.multi_cell(w=0, h=10, txt='the most used languages ')
+pdf.multi_cell(w=0, h=10, txt='By identifying the most commonly used languages, we can optimize our content localization efforts and ensure effective communication with our target audience. ')
 pdf.add_page()
 pdf.ln(15)
 pdf.image('./homoglyphValues.png',
-          x = 18, y = 15, w = 170, h = 70, type = 'PNG')
+          x = 18, y = 20, w = 170, h = 70, type = 'PNG')
 pdf.ln(90)
 print("90%")
 pdf.multi_cell(w=0, h=10, txt='the values of homoglyph')
@@ -1226,52 +1147,45 @@ pdf.ln(100)
 pdf.multi_cell(w=0, h=10, txt='top submitters in the database')
 print("91%")
 pdf.add_page()
-pdf.cell(0, 10, "the most used Analysed Links:", ln=True)
-pdf.ln(2)
-for link, count in analysedlinkkk.items():
-    line =f" {link}: {count}"
-    pdf.multi_cell(0, 10, line, align="L")
-    pdf.ln(5)     
-print("92%")    
-pdf.add_page()
 pdf.ln(15)
 pdf.image('./LibraryBool.png',
-          x = 18, y = 15, w = 170, h = 70, type = 'PNG')
+          x = 18, y = 20, w = 170, h = 70, type = 'PNG')
 pdf.ln(90)
 pdf.multi_cell(w=0, h=10, txt='libraryBool values')
-pdf.image('./company_counts.png', 
+pdf.image('./company_counts.png',
           x = 18, y = 150, w = 170, h = 70, type = 'PNG')
+print("92%")
 pdf.ln(100)
 pdf.multi_cell(w=0, h=10, txt='the most used user email')
 pdf.add_page()
 pdf.ln(15)
 print("93%")
 pdf.image('./fileName.png',
-          x = 13, y = 15, w = 170, h = 100, type = 'PNG')
+          x = 12, y = 15, w = 170, h = 100, type = 'PNG')
 pdf.ln(90)
 pdf.multi_cell(w=0, h=10, txt='filename values in archive')
-pdf.image('./isAnalysis.png', 
+pdf.image('./isAnalysis.png',
           x = 18, y = 150, w = 170, h = 70, type = 'PNG')
 pdf.ln(100)
 pdf.multi_cell(w=0, h=10, txt='isAnalysis values in archive')
 pdf.add_page()
 pdf.ln(15)
 pdf.image('./isDeleted.png',
-          x = 18, y = 15, w = 170, h = 70, type = 'PNG')
+          x = 18, y = 20, w = 170, h = 70, type = 'PNG')
 pdf.ln(90)
 pdf.multi_cell(w=0, h=10, txt='isDeleted values in archive')
 print("94%")
-pdf.image('./isDone.png', 
+pdf.image('./isDone.png',
           x = 18, y = 150, w = 170, h = 70, type = 'PNG')
 pdf.ln(100)
 pdf.multi_cell(w=0, h=10, txt='isDone values in archive')
 pdf.add_page()
 pdf.ln(15)
 pdf.image('./isFirstTime.png',
-          x = 18, y = 15, w = 170, h = 70, type = 'PNG')
+          x = 18, y = 20, w = 170, h = 70, type = 'PNG')
 pdf.ln(90)
 pdf.multi_cell(w=0, h=10, txt='isFirstTime values in archive')
-pdf.image('./isLibrary.png', 
+pdf.image('./isLibrary.png',
           x = 18, y = 150, w = 170, h = 70, type = 'PNG')
 pdf.ln(100)
 print("95%")
@@ -1279,10 +1193,10 @@ pdf.multi_cell(w=0, h=10, txt='isLibrary values in archive')
 pdf.add_page()
 pdf.ln(15)
 pdf.image('./isPermanentlyDeleted.png',
-          x = 18, y = 15, w = 170, h = 70, type = 'PNG')
+          x = 18, y = 20, w = 170, h = 70, type = 'PNG')
 pdf.ln(90)
 pdf.multi_cell(w=0, h=10, txt='isPermanentlyDeleted values in archive')
-pdf.image('./isPublic.png', 
+pdf.image('./isPublic.png',
           x = 18, y = 150, w = 170, h = 70, type = 'PNG')
 print("96%")
 pdf.ln(100)
@@ -1290,7 +1204,7 @@ pdf.multi_cell(w=0, h=10, txt='isPublic values in archive')
 pdf.add_page()
 pdf.ln(15)
 pdf.image('./isTranslated.png',
-          x = 18, y = 15, w = 170, h = 70, type = 'PNG')
+          x = 18, y = 20, w = 170, h = 70, type = 'PNG')
 print("97%")
 pdf.ln(90)
 pdf.multi_cell(w=0, h=10, txt='isTranslated values in archive')
@@ -1302,13 +1216,13 @@ print("98%")
 pdf.add_page()
 pdf.ln(15)
 pdf.image('./isPlagPrevent.png',
-          x = 18, y = 15, w = 170, h = 70, type = 'PNG')
+          x = 18, y = 20, w = 170, h = 70, type = 'PNG')
 pdf.ln(90)
 pdf.multi_cell(w=0, h=10, txt='isPlagPrevent values in archive')
-pdf.image('./size.png', 
+pdf.image('./size.png',
           x = 18, y = 130, w = 170, h = 100, type = 'PNG')
 print("99%")
 pdf.ln(130)
 pdf.multi_cell(w=0, h=10, txt='size values in archive')
 print("100%")
-pdf.output(f'./40.pdf', 'F')
+pdf.output(f'./50.pdf', 'F')
